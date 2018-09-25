@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=OryxCoin
+Comment=OryxCoin P2P Cryptocurrency
+Comment[ru]=OryxCoin, P2P криптовалюта
+Comment[fr]=OryxCoin, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=OryxCoin, eşten eşe kriptografik sanal para birimi
+Exec=/usr/bin/OryxCoin-qt
+Terminal=false
+Type=Application
+Icon=/usr/share/pixmaps/OryxCoin80.xpm
+MimeType=x-scheme-handler/OryxCoin;
+Categories=Office;

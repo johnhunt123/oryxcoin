@@ -1,0 +1,11 @@
+[Unit]
+Description=OryxCoin daemon serivce
+After=network.target
+
+[Service]
+Type=simple
+User=OryxCoin
+ExecStart=/opt/OryxCoin/OryxCoind
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,2 @@
+debian/bin/OryxCoind usr/bin
+src/OryxCoind usr/lib/OryxCoin

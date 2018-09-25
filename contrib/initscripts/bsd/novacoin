@@ -1,0 +1,68 @@
+#!/bin/sh
+
+# PROVIDE: OryxCoin
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+
+#
+# Add the following lines to /etc/rc.conf.local or /etc/rc.conf
+# to enable this service:
+#
+# OryxCoin_enable (bool): Set to NO by default. Set this variable to YES if you want to enable OryxCoin service.
+# OryxCoin_config (path): Set to /usr/local/etc/OryxCoin.conf by default.
+# OryxCoin_user:  The user account OryxCoin daemon runs as. It uses 'root' user by default.
+# OryxCoin_group: The group account OryxCoin daemon runs as. It uses 'wheel' group by default.
+# OryxCoin_datadir (str): Default to "/var/db/OryxCoin". Base data directory.
+
+. /etc/rc.subr
+
+name=OryxCoin
+rcvar=OryxCoin_enable
+
+: ${OryxCoin_enable:=NO}
+: ${OryxCoin_config=/usr/local/etc/OryxCoin.conf}
+: ${OryxCoin_datadir=/var/db/OryxCoin}
+: ${OryxCoin_user="root"}
+: ${OryxCoin_group="wheel"}
+
+required_files=${OryxCoin_config}
+command=/usr/local/bin/OryxCoind
+OryxCoin_chdir=${OryxCoin_datadir}
+pidfile="${OryxCoin_datadir}/OryxCoind.pid"
+stop_cmd=OryxCoin_stop
+command_args="-conf=${OryxCoin_config} -datadir=${OryxCoin_datadir} -daemon -pid=${pidfile}"
+start_precmd="${name}_prestart"
+
+OryxCoin_create_datadir()
+{
+	echo "Creating data directory"
+	eval mkdir -p ${OryxCoin_datadir}
+	[ $? -eq 0 ] && chown -R ${OryxCoin_user}:${OryxCoin_group} ${OryxCoin_datadir}
+}
+
+OryxCoin_prestart()
+{
+	if [ ! -d "${OryxCoin_datadir}/." ]; then
+		OryxCoin_create_datadir || return 1
+	fi
+}
+
+OryxCoin_requirepidfile()
+{
+	if [ ! "0`check_pidfile ${pidfile} ${command}`" -gt 1 ]; then
+		echo "${name} not running? (check $pidfile)."
+		exit 1
+	fi
+}
+
+OryxCoin_stop()
+{
+    OryxCoin_requirepidfile
+
+	echo "Stopping ${name}."
+	eval ${command} -conf=${OryxCoin_config} -datadir=${OryxCoin_datadir} stop
+	wait_for_pids ${rc_pid}
+}
+
+load_rc_config $name
+run_rc_command "$1"
